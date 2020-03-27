@@ -67,7 +67,6 @@ class LoginController extends Controller
     public function logout()
     {
         $this->guard()->logout();
-        Log::info("teste");
         return response()->json(['message' => 'Logged out successfully']);
 
     }

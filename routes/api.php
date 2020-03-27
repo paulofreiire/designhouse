@@ -1,6 +1,7 @@
 <?php
 
 //Public Routes
+Route::get('me', 'User\MeController@getMe');
 
 // Route grop for authenticated users only
 Route::group(['middleware' => ['auth:api']], function () {
