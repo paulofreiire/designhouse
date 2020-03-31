@@ -6,6 +6,8 @@ Route::get('me', 'User\MeController@getMe');
 // Route grop for authenticated users only
 Route::group(['middleware' => ['auth:api']], function () {
     Route::post('logout', 'Auth\LoginController@logout');
+    Route::put('settings/profile', 'User\SettingsController@updateProfile');
+    Route::put('settings/password', 'User\SettingsController@updatePassword');
 });
 
 // Route grop for guest users only
@@ -17,4 +19,5 @@ Route::group(['middleware' => ['guest:api']], function () {
     Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail');
     Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.reset');
 });
+
 
