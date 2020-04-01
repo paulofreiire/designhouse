@@ -38,7 +38,8 @@ class UploadImage implements ShouldQueue
     {
         $disk = $this->design->disk;
         $filename = $this->design->image;
-        $original_file = storage_path() . '/uplodas/original' . $filename;
+        $original_file = storage_path() . '/uploads/original/' . $filename;
+        Log::info($original_file);
 
         try {
             //create the image and saving in temp folder
@@ -61,7 +62,7 @@ class UploadImage implements ShouldQueue
                 File::delete($large);
             }
 
-            if (Storage::disk($disk)->put('uploads/designs/large/' . $filename, fopen($thumbnail, 'r+'))) {
+            if (Storage::disk($disk)->put('uploads/designs/thumbnail/' . $filename, fopen($thumbnail, 'r+'))) {
                 File::delete($thumbnail);
             }
 
