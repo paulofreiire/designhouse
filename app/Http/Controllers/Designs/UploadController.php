@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Jobs\UploadImage;
 use Illuminate\Http\Request;
 
+
 class UploadController extends Controller
 {
     public function upload(Request $request)
     {
+        
         $this->validate($request, [
             'image' => ['required', 'mimes:jpeg,gif,bpm,png', 'max:2048']
         ]);
