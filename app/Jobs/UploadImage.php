@@ -43,6 +43,7 @@ class UploadImage implements ShouldQueue
 
         try {
             //create the image and saving in temp folder
+            Log::info(storage_path());
             Image::make($original_file)->fit(800, 600, function ($constraint) {
                 $constraint->aspectRatio();
             })->save($large = storage_path('uploads/large/' . $filename));
