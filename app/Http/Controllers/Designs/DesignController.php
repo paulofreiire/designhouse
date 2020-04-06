@@ -21,7 +21,8 @@ class DesignController extends Controller
 
         $this->validate($request, [
             'title' => ['required', 'unique:designs,title,' . $id],
-            'description' => ['required', 'string', 'max:140']
+            'description' => ['required', 'string', 'max:140'],
+            'tags' => ['required']
         ]);
 
 
@@ -31,6 +32,8 @@ class DesignController extends Controller
             'slug' => Str::slug($request->title),
             'is_live' => $design->upload_successful ? $request->is_live : false
         ]);
+
+        $design->retag($request->tags);
 
         return new DesignResource($design);
     }
@@ -42,7 +45,6 @@ class DesignController extends Controller
 
         foreach (['thumbnail', 'large', 'original'] as $size) {
             $imageWithPath = "uploads/designs/{$size}/" . $design->image;
-            Log::info(Storage::disk($design->disk)->get($imageWithPath));
             Storage::disk($design->disk)->exists($imageWithPath) ?
                 Storage::disk($design->disk)->delete($imageWithPath) : false;
         }
