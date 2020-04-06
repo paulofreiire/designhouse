@@ -12,6 +12,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     //Upload Designs
     Route::post('designs', 'Designs\UploadController@upload');
     Route::put('designs/{id}', 'Designs\DesignController@update');
+    Route::delete('designs/{id}', 'Designs\DesignController@destroy');
 
 });
 
@@ -24,5 +25,6 @@ Route::group(['middleware' => ['guest:api']], function () {
     Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail');
     Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.reset');
 });
+
 
 
