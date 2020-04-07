@@ -3,6 +3,12 @@
 //Public Routes
 Route::get('me', 'User\MeController@getMe');
 
+//Get designs
+Route::get('designs', 'Designs\DesignController@index');
+
+//Get Users
+Route::get('users', 'User\UserController@index');
+
 // Route grop for authenticated users only
 Route::group(['middleware' => ['auth:api']], function () {
     Route::post('logout', 'Auth\LoginController@logout');
