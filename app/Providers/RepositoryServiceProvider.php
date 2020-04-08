@@ -32,6 +32,6 @@ class RepositoryServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->app->bind(DesignInterface::class, DesignRepository::class);
-        $this->app->bind(DesignInterface::class, DesignRepository::class);
+        $this->app->bind(UserInterface::class, UserRepository::class);
     }
 }
