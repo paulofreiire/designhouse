@@ -26,12 +26,7 @@ class DesignController extends Controller
 
     public function index()
     {
-        $designs = $this->designs->withCriteria([
-            new LatestFirst(),
-            new ForUser(1),
-            new IsLive()
-        ])
-            ->all();
+        $designs = $this->designs->all();
         return DesignResource::collection($designs);
     }
 
