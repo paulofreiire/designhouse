@@ -28,6 +28,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     //Likes
     Route::post('designs/{id}/like', 'Designs\DesignController@like');
+    Route::get('designs/{id}/liked', 'Designs\DesignController@checkIfUserHasLiked');
 
 
 });
@@ -41,6 +42,7 @@ Route::group(['middleware' => ['guest:api']], function () {
     Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail');
     Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.reset');
 });
+
 
 
 

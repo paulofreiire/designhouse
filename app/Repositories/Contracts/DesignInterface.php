@@ -10,4 +10,6 @@ interface DesignInterface
 
     public function like($id);
 
+    public function isLikedByUser($id);
+
 }
