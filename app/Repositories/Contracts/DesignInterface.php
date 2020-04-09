@@ -8,4 +8,6 @@ interface DesignInterface
 
     public function addComment($designId, array $data);
 
+    public function like($id);
+
 }

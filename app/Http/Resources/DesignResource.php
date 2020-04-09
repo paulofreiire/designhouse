@@ -9,7 +9,7 @@ class DesignResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return array
      */
     public function toArray($request)
@@ -18,7 +18,9 @@ class DesignResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'slug' => $this->slug,
-            'image' => $this->images,
+            'images' => $this->images,
+            'is_live' => $this->is_live,
+            'likes' => $this->likes()->count(),
             'description' => $this->description,
             'tag_list' => [
                 'tags' => $this->tagArray,
@@ -32,7 +34,9 @@ class DesignResource extends JsonResource
                 'updated_at_human' => $this->updated_at->diffForHumans(),
                 'updated_at' => $this->updated_at
             ],
-            'comments' => CommentResource::collection($this->comments),
+            'comments' => CommentResource::collection(
+                $this->whenLoaded('comments')
+            ),
             'user' => new UserResource($this->user)
         ];
     }

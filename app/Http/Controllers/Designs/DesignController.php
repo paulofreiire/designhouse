@@ -5,10 +5,7 @@ namespace App\Http\Controllers\Designs;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DesignResource;
 use App\Repositories\Contracts\DesignInterface;
-use App\Repositories\Eloquent\Criteria\ForUser;
-use App\Repositories\Eloquent\Criteria\IsLive;
-use App\Repositories\Eloquent\Criteria\LatestFirst;
-use Hamcrest\Core\Is;
+use App\Repositories\Eloquent\Criteria\EagerLoad;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -26,7 +23,10 @@ class DesignController extends Controller
 
     public function index()
     {
-        $designs = $this->designs->all();
+        $designs = $this->designs->withCriteria([
+            new EagerLoad(['user', 'comments'])
+        ])
+            ->all();
         return DesignResource::collection($designs);
     }
 
@@ -72,11 +72,19 @@ class DesignController extends Controller
                 Storage::disk($design->disk)->delete($imageWithPath) : false;
         }
 
-        $this->designs->delete();
+        $this->designs->delete($id);
 
-        return response()->json(
-            []
-        );
+        return response()->json([
+            "message" => "Design deleted"
+        ]);
 
+    }
+
+    public function like($id)
+    {
+        $this->designs->like($id);
+        return response()->json([
+            'message' => "Successful"
+        ], 200);
     }
 }
