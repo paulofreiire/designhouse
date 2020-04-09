@@ -9,7 +9,7 @@ class UserResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return array
      */
     public function toArray($request)
@@ -18,7 +18,8 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'username' => $this->username,
             'name' => $this->name,
-            'designs' => $this->designs,
+            'designs' => DesignResource::collection(
+                $this->whenLoaded('designs')),
             'email' => $this->email,
             'create_dates' => [
                 'created_at_human' => $this->created_at->diffForHumans(),
@@ -29,7 +30,6 @@ class UserResource extends JsonResource
             'about' => $this->about,
             'location' => $this->location,
             'available_to_hire' => $this->available_to_hire,
-
 
 
         ];
