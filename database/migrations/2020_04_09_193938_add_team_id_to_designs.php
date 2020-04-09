@@ -14,7 +14,8 @@ class AddTeamIdToDesigns extends Migration
     public function up()
     {
         Schema::table('designs', function (Blueprint $table) {
-            //
+            $table->bigInteger('team_id')
+                ->unsigned()->nullable();
         });
     }
 
@@ -26,7 +27,7 @@ class AddTeamIdToDesigns extends Migration
     public function down()
     {
         Schema::table('designs', function (Blueprint $table) {
-            //
+            $table->dropColumn(['tem_id']);
         });
     }
 }
