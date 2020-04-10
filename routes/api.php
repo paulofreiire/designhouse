@@ -40,6 +40,12 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::put('teams/{id}', 'Teams\TeamController@update');
     Route::delete('teams/{id}', 'Teams\TeamController@destroy');
 
+    //Invitations
+    Route::post('invitations/{teamId}', 'Teams\InvitationController@invite');
+    Route::post('invitations/{id}/resend', 'Teams\InvitationController@resend');
+    Route::post('invitations/{id}/respond', 'Teams\InvitationController@respond');
+    Route::post('invitations/{id}', 'Teams\InvitationController@destroy');
+
 
 });
 

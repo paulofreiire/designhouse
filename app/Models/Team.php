@@ -16,12 +16,12 @@ class Team extends Model
     {
         parent::boot();
 
-        static::created(function ($team){
+        static::created(function ($team) {
             /*auth()->user()->teams()->attach($team->id);*/
             $team->members()->attach(auth()->id());
         });
 
-        static::deleting(function ($team){
+        static::deleting(function ($team) {
             $team->members()->sync([]);
         });
     }
@@ -44,5 +44,17 @@ class Team extends Model
     public function hasUser(User $user)
     {
         return $this->members()->where('user_id', $user->id)->first() ? true : false;
+    }
+
+    public function invitations()
+    {
+        return $this->hasMany(Invitation::class);
+    }
+
+    public function hasPendingInvite($email)
+    {
+        return (bool)$this->invitations()
+            ->where('recipient_email', $email)
+            ->count();
     }
 }
