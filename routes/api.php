@@ -2,6 +2,7 @@
 
 //Public Routes
 Route::get('me', 'User\MeController@getMe');
+/*Route::post('logout', 'Auth\LoginController@logout');*/
 
 //Get designs
 Route::get('designs', 'Designs\DesignController@index');
@@ -39,17 +40,19 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('users/teams', 'Teams\TeamController@fetchUserTeams');
     Route::put('teams/{id}', 'Teams\TeamController@update');
     Route::delete('teams/{id}', 'Teams\TeamController@destroy');
+    Route::delete('teams/{id}', 'Teams\TeamController@destroy');
+    Route::delete('teams/{id}/user/{userId}', 'Teams\TeamController@removeFromTeam');
 
     //Invitations
     Route::post('invitations/{teamId}', 'Teams\InvitationController@invite');
     Route::post('invitations/{id}/resend', 'Teams\InvitationController@resend');
     Route::post('invitations/{id}/respond', 'Teams\InvitationController@respond');
-    Route::post('invitations/{id}', 'Teams\InvitationController@destroy');
+    Route::delete('invitations/{id}', 'Teams\InvitationController@destroy');
 
 
 });
 
-// Route grop for guest users only
+// Route group for guest users only
 Route::group(['middleware' => ['guest:api']], function () {
     Route::post('register', 'Auth\RegisterController@register');
     Route::post('verification/verify/{user}', 'Auth\VerificationController@verify')->name('verification.verify');

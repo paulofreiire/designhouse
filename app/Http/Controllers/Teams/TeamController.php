@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\TeamResource;
 use App\Models\Team;
 use App\Models\User;
+use App\Repositories\Contracts\InvitationInterface;
 use App\Repositories\Contracts\TeamInterface;
+use App\Repositories\Contracts\UserInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -14,11 +16,13 @@ use Illuminate\Support\Str;
 class TeamController extends Controller
 {
 
-    protected $teams;
+    protected $teams, $users, $invitations;
 
-    public function __construct(TeamInterface $teams)
+    public function __construct(TeamInterface $teams, UserInterface $users, InvitationInterface $invitations)
     {
         $this->teams = $teams;
+        $this->users = $users;
+        $this->invitations = $invitations;
     }
 
     public function index()
@@ -80,6 +84,37 @@ class TeamController extends Controller
 
     public function destroy($id)
     {
+        $team = $this->teams->find($id);
+        $this->authorize('delete', $team);
+
+        $team->delete();
+
+        return response()->json([
+            'message' => 'Deleted'
+        ]);
+    }
+
+    public function removeFromTeam($teamId, $userId)
+    {
+        $team = $this->teams->find($teamId);
+        $user = $this->users->find($userId);
+
+        if ($user->isOwnerOfTeam($team))
+            return response()->json([
+                'message' => 'You are the team owner'
+            ], 401);
+
+        if (!auth()->user()->isOwnerOfTeam($team) && auth()->id() != $user->id)
+            return response()->json([
+                'message' => 'You can not do this'
+            ], 401);
+
+        $this->invitations->removeUserFromTeam($team, $userId);
+
+        return response()->json([
+            'message' => 'Removed'
+        ], 200);
+
 
     }
 }

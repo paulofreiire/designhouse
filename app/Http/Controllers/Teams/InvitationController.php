@@ -9,6 +9,7 @@ use App\Repositories\Contracts\InvitationInterface;
 use App\Repositories\Contracts\TeamInterface;
 use App\Repositories\Contracts\UserInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class InvitationController extends Controller
@@ -55,7 +56,7 @@ class InvitationController extends Controller
         }
 
         if ($team->hasUser($recipient)) return response()->json([
-            'message' => 'Thsi user seems to be a team member'
+            'message' => 'This user seems to be a team member'
         ], 422);
 
         $this->createInvitation(true, $team, $request->email);
@@ -64,19 +65,64 @@ class InvitationController extends Controller
         ], 200);
     }
 
-    public function resend()
+    public function resend($id)
     {
+        $invitation = $this->invitations->find($id);
 
+        $this->authorize('resend', $invitation);
+        if (!auth()->user()->isOwnerOfTeam($invitation->team))
+            return response()->json([
+                'message' => 'You are not the team owner'
+            ], 401);
+        $recipient = $this->users->findByEmail($invitation->recipient_email);
+
+        Mail::to($invitation->recipient_email)
+            ->send(new SendInvitationToJoinTeam($invitation, !is_null($recipient)));
+
+        return response()->json([
+            'message' => 'Invitation resent'
+        ], 200);
     }
 
-    public function respond()
+    public function respond(Request $request, $id)
     {
+        $this->validate($request, [
+            'token' => ['required'],
+            'decision' => ['required']
+        ]);
 
+        $token = $request->token;
+        $decision = $request->decision; //y or n
+        $invitation = $this->invitations->find($id);
+        Log::info($invitation->recipient_email);
+
+        //check if belongs to user
+        $this->authorize('respond', $invitation);
+
+        if ($invitation->token != $token)
+            return response()->json([
+                'message' => 'This is not your invitation'
+            ], 401);
+
+        if ($decision != 'deny')
+            $this->invitations->addUserToTeam($invitation->team, auth()->id());
+
+        $invitation->delete();
+
+        return response()->json([
+            'message' => 'Successful'
+        ], 200);
     }
 
-    public function destroy()
+    public function destroy($id)
     {
+        $invitation = $this->invitations->find($id);
+        $this->authorize('delete', $invitation);
+        $invitation->delete();
 
+        return response()->json([
+            'message' => 'Deleted'
+        ], 200);
     }
 
     protected function createInvitation(bool $user_exists, Team $team, string $email)
