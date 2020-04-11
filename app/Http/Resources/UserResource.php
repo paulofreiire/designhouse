@@ -20,7 +20,8 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'designs' => DesignResource::collection(
                 $this->whenLoaded('designs')),
-            'email' => $this->email,
+            $this->mergeWhen(auth()->check() && auth()->id() == $this->id,
+                ['email' => $this->email]),
             'create_dates' => [
                 'created_at_human' => $this->created_at->diffForHumans(),
                 'created_at' => $this->created_at
@@ -30,7 +31,6 @@ class UserResource extends JsonResource
             'about' => $this->about,
             'location' => $this->location,
             'available_to_hire' => $this->available_to_hire,
-
 
         ];
     }
