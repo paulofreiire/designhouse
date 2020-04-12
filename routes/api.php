@@ -2,16 +2,24 @@
 
 //Public Routes
 Route::get('me', 'User\MeController@getMe');
-/*Route::post('logout', 'Auth\LoginController@logout');*/
 
 //Get designs
 Route::get('designs', 'Designs\DesignController@index');
 Route::get('designs/{id}', 'Designs\DesignController@show');
+Route::get('designs/slug/{slug}', 'Designs\DesignController@findBySlug');
 
 //Get Users
+Route::get('user/{username}', 'User\UserController@findByUsername');
 Route::get('users', 'User\UserController@index');
+Route::get('users/{id}', 'Designs\DesignController@getForUser');
 
-Route::get('teams/{id}', 'Team\TeamsController@findBySlug');
+//Team
+Route::get('teams/{slug}', 'Team\TeamsController@findBySlug');
+Route::get('teams/{id}/designs', 'Designs\DesignController@getForTeam');
+
+//Search
+Route::get('search/designs', 'Designs\DesignController@search');
+Route::get('search/designers', 'User\UserController@search');
 
 // Route grop for authenticated users only
 Route::group(['middleware' => ['auth:api']], function () {

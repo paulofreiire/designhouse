@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\DesignResource;
 use App\Repositories\Contracts\DesignInterface;
 use App\Repositories\Eloquent\Criteria\EagerLoad;
+use App\Repositories\Eloquent\Criteria\IsLive;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -80,7 +81,15 @@ class DesignController extends Controller
         return response()->json([
             "message" => "Design deleted"
         ]);
+    }
 
+    public function findBySlug($slug)
+    {
+        $design = $this->designs->withCriteria([
+            new IsLive(),
+            new EagerLoad(['user', 'comments'])
+        ])->findWhereFirst('slug', $slug);
+        return new DesignResource($design);
     }
 
     public function like($id)
@@ -97,5 +106,27 @@ class DesignController extends Controller
         return response()->json([
             'liked' => $isLiked
         ]);
+    }
+
+    public function search(Request $request)
+    {
+        $designs = $this->designs->search($request);
+        return DesignResource::collection($designs);
+    }
+
+    public function getForTeam($teamId)
+    {
+        $designs = $this->designs->withCriteria([
+            new IsLive()
+        ])->findWhere('team_id', $teamId);
+        return DesignResource::collection($designs);
+    }
+
+    public function getForUSer($userId)
+    {
+        $designs = $this->designs->withCriteria([
+            new IsLive()
+        ])->findWhere('user_id', $userId);
+        return DesignResource::collection($designs);
     }
 }

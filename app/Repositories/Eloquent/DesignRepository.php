@@ -38,5 +38,29 @@ class DesignRepository extends BaseRepository implements DesignInterface
         return $design->isLikedByUser(auth()->id());
     }
 
+    public function search($request)
+    {
+        $query = (new $this->model)->newQuery();
+        $query->where('is_live', true);
+
+        if ($request->has_comments)
+            $query->has('comments');
+
+        if ($request->has_team)
+            $query->has('team');
+
+        if ($request->q)
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->q . '%')
+                    ->orWhere('description', 'like', '%' . $request->q . '%');
+            });
+
+        $request->orderBy == 'likes' ?
+            $query->withCount('likes')
+                ->orderByDesc('likes_count') : $query->latest();
+
+        return $query->get();
+    }
+
 
 }

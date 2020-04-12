@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Contracts;
 
+use Illuminate\Http\Request;
+
 interface DesignInterface
 {
     public function applyTags($id, array $data);
@@ -11,5 +13,7 @@ interface DesignInterface
     public function like($id);
 
     public function isLikedByUser($id);
+
+    public function search(Request $request);
 
 }
